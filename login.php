@@ -7,7 +7,7 @@
 
 	// start a new session (required for Hybridauth)
 	session_start();
-
+	//error_reporting(-1);
 
   include("connect.php");
   $link = db_connect();
@@ -54,8 +54,7 @@
 		// let generate a random password for the user
 		$password = md5( str_shuffle( "0123456789abcdefghijklmnoABCDEFGHIJ" ) );
 
-		mysqli_query_excute(
-			"INSERT INTO users
+		$sql = ("INSERT INTO users
 			(
 				email,
 				password,
@@ -72,36 +71,18 @@
 				'$first_name',
 				'$last_name',
 				'$provider_name',
-				$provider_user_id,
+				'$provider_user_id',
 				NOW()
 			)"
 		);
+		global $link;
+		mysqli_query( $link, $sql );
 	}
 
 	// if page requested by submitting login form
-	if( isset( $_REQUEST["email"] ) && isset( $_REQUEST["password"] ) )
-	{
-		$user_exist = get_user_by_email_and_password( $_REQUEST["email"], $_REQUEST["password"] );
-
-		// user exist?
-		if( $user_exist )
-		{
-			// set the user as connected and redirect him to a home page or something
-			$_SESSION["user_connected"] = true;
-
-			header("Location: http://www.localhost/g/");
-		}
-
-		// wrong email or password?
-		else
-		{
-			// redirect him to an error page
-			header("Location: http://www.localhost/g/err");
-		}
-	}
 
 	// else, if login page request by clicking a provider button
-	elseif( isset( $_REQUEST["provider"] ) )
+	if( isset( $_REQUEST["provider"] ) )
 	{
 		// the selected provider
 		$provider_name = $_REQUEST["provider"];
@@ -109,8 +90,8 @@
 		try
 		{
 			// change the following paths if necessary
-      $config   = dirname(__FILE__) . '/social/hybridauth/config.php'; //dirname(__FILE__) . '/library/config.php';
-      require_once( dirname(__DIR__) ."/g/social/hybridauth/Hybrid/Auth.php" ); //dirname(__DIR__) . "
+			$config   = 'social/hybridauth/config.php'; //dirname(__FILE__) . '/library/config.php';
+		require_once( "social/hybridauth/Hybrid/Auth.php" ); //dirname(__DIR__) . "
 
 			// initialize Hybrid_Auth with a given file
 			$hybridauth = new Hybrid_Auth( $config );
@@ -146,8 +127,7 @@
 
 		// set the user as connected and redirect him
 		$_SESSION["user_connected"] = true;
-
-		header("Location: http://www.localhost/g/");
+		header("Location: http://new2.japanesegoi.com?alreadyloggedindudee");
 	}
 ?>
 <html>
